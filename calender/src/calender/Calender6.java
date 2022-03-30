@@ -1,12 +1,32 @@
 package calender;
 
-import java.util.Scanner;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
 
 public class Calender6 {
 
 
 	private static final int[] DAYS = {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
 	private static final int[] YDAYS = {0, 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+	
+	private HashMap <Date,String> planMap;
+	
+	public Calender6() {
+		planMap = new HashMap<Date, String>();
+	}
+	
+	public void registerPlan(String strDate,String plan) throws ParseException {
+		Date date = new SimpleDateFormat("yyyy-MM-dd").parse(strDate);
+		planMap.put(date, plan);
+	}
+	
+	public String searchPlan(String strDate) throws ParseException{
+		Date date = new SimpleDateFormat("yyyy-MM-dd").parse(strDate);
+		String plan = planMap.get(date);
+		return plan;
+	}
 	
 	public static boolean isLeapYear(int year) {
 		if ((year % 4 == 0 && year % 100 != 0) || year % 400 == 0) {
@@ -61,7 +81,7 @@ public class Calender6 {
 	private int getWeekDay(int year,int month,int day) {
 
 		int syear = 1970;
-		final int STANDARD_WEEKDAY = 3;
+		final int STANDARD_WEEKDAY = 4;
 		
 		int count = 0;
 		
@@ -74,7 +94,7 @@ public class Calender6 {
 			int delta= getMaxDaysOfMonth(year,i);
 			count +=delta;
 		}
-		count+=day+1;
+		count+=day;
 		int weekday =(count +STANDARD_WEEKDAY)%7;
 		
 		return weekday ;
