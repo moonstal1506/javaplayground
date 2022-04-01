@@ -1,31 +1,61 @@
 package calender;
 
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Scanner;
 
 public class Calender6 {
 
 
 	private static final int[] DAYS = {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
 	private static final int[] YDAYS = {0, 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
-	
+	private static final String SAVE_FILE="calendar.dat";
 	private HashMap <Date,PlanItem> planMap;
 	
 	public Calender6() {
 		planMap = new HashMap<Date, PlanItem>();
+		File f = new File(SAVE_FILE);
+		if(!f.exists()) return;
+		try {
+			Scanner s= new Scanner(f);
+			while(s.hasNext()) {
+				String line = s.nextLine();
+				String[] words = line.split(",");
+				String date = words[0];
+				String detail = words[1].replaceAll("\"", "");
+				System.out.println(date+":"+detail);
+				PlanItem planItem = new PlanItem(date, detail);
+				planMap.put(planItem.getPlanDate(), planItem);
+				
+			}
+			s.close();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	public void registerPlan(String strDate,String plan){
-//		Date date = new SimpleDateFormat("yyyy-MM-dd").parse(strDate);
-		
 		PlanItem planItem = new PlanItem(strDate, plan);
 		planMap.put(planItem.getPlanDate(), planItem);
+		File f = new File(SAVE_FILE);
+		String item = planItem.saveString();
+		
+		try {
+			FileWriter fw = new FileWriter(f,true);
+			fw.write(item);
+			fw.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public PlanItem searchPlan(String strDate) {
-//		Date date = new SimpleDateFormat("yyyy-MM-dd").parse(strDate);
-		
 		Date date = PlanItem.getDateFromString(strDate);
 		return planMap.get(date);
 	}
